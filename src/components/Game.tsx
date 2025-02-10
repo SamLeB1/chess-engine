@@ -1,5 +1,17 @@
 import { useState } from "react";
 import Square from "./Square.tsx";
+import img_bishop_b from "../assets/images/Chess_bdt45.svg";
+import img_bishop_w from "../assets/images/Chess_blt45.svg";
+import img_king_b from "../assets/images/Chess_kdt45.svg";
+import img_king_w from "../assets/images/Chess_klt45.svg";
+import img_knight_b from "../assets/images/Chess_ndt45.svg";
+import img_knight_w from "../assets/images/Chess_nlt45.svg";
+import img_pawn_b from "../assets/images/Chess_pdt45.svg";
+import img_pawn_w from "../assets/images/Chess_plt45.svg";
+import img_queen_b from "../assets/images/Chess_qdt45.svg";
+import img_queen_w from "../assets/images/Chess_qlt45.svg";
+import img_rook_b from "../assets/images/Chess_rdt45.svg";
+import img_rook_w from "../assets/images/Chess_rlt45.svg";
 import type { Piece } from "../types.ts";
 
 const initBoard: (Piece | null)[][] = [
@@ -9,8 +21,8 @@ const initBoard: (Piece | null)[][] = [
   [null, null, null, null, null, null, null, null],
   [null, null, null, null, null, null, null, null],
   [null, null, null, null, null, null, null, null],
-  ["w1", "w2", "w3", "w4", "w5", "w3", "w2", "w1"],
   ["w0", "w0", "w0", "w0", "w0", "w0", "w0", "w0"],
+  ["w1", "w2", "w3", "w4", "w5", "w3", "w2", "w1"],
 ];
 
 export default function Game() {
@@ -26,6 +38,37 @@ export default function Game() {
     }
   }
 
+  function getPieceImg(piece: Piece) {
+    switch (piece) {
+      case "w0":
+        return img_pawn_w;
+      case "w1":
+        return img_rook_w;
+      case "w2":
+        return img_knight_w;
+      case "w3":
+        return img_bishop_w;
+      case "w4":
+        return img_queen_w;
+      case "w5":
+        return img_king_w;
+      case "b0":
+        return img_pawn_b;
+      case "b1":
+        return img_rook_b;
+      case "b2":
+        return img_knight_b;
+      case "b3":
+        return img_bishop_b;
+      case "b4":
+        return img_queen_b;
+      case "b5":
+        return img_king_b;
+      default:
+        return null;
+    }
+  }
+
   return (
     <div>
       {board.map((row, i) => (
@@ -35,7 +78,7 @@ export default function Game() {
               key={j}
               bgColor={getBgColor(i, j)}
               piece={square}
-              img={null}
+              img={getPieceImg(square as Piece)}
             />
           ))}
         </div>
