@@ -1,1 +1,6 @@
 @import "tailwindcss";
+
+@theme {
+  --color-lightsquare: #ffeddb;
+  --color-darksquare: #e3b7a0;
+}
