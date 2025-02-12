@@ -1,3 +1,8 @@
+export type Index = {
+  i: number;
+  j: number;
+};
+
 export type Piece =
   | "w0"
   | "w1"

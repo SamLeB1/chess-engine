@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useGameStore } from "../store/gameStore.ts";
 import Square from "./Square.tsx";
 import img_bishop_b from "../assets/images/Chess_bdt45.svg";
 import img_bishop_w from "../assets/images/Chess_blt45.svg";
@@ -14,19 +14,8 @@ import img_rook_b from "../assets/images/Chess_rdt45.svg";
 import img_rook_w from "../assets/images/Chess_rlt45.svg";
 import type { Piece } from "../types.ts";
 
-const initBoard: (Piece | null)[][] = [
-  ["b1", "b2", "b3", "b4", "b5", "b3", "b2", "b1"],
-  ["b0", "b0", "b0", "b0", "b0", "b0", "b0", "b0"],
-  [null, null, null, null, null, null, null, null],
-  [null, null, null, null, null, null, null, null],
-  [null, null, null, null, null, null, null, null],
-  [null, null, null, null, null, null, null, null],
-  ["w0", "w0", "w0", "w0", "w0", "w0", "w0", "w0"],
-  ["w1", "w2", "w3", "w4", "w5", "w3", "w2", "w1"],
-];
-
 export default function Game() {
-  const [board, setBoard] = useState<(Piece | null)[][]>(initBoard);
+  const board = useGameStore((state) => state.board);
 
   function getBgColor(i: number, j: number) {
     if (i % 2 === 0) {
@@ -76,6 +65,7 @@ export default function Game() {
           {row.map((square, j) => (
             <Square
               key={j}
+              index={{ i, j }}
               bgColor={getBgColor(i, j)}
               piece={square}
               img={getPieceImg(square as Piece)}
