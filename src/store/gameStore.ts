@@ -3,7 +3,9 @@ import type { Index, Piece } from "../types.ts";
 
 type GameState = {
   board: (Piece | null)[][];
+  turn: "w" | "b";
   selectedSquare: Index | null;
+  changeTurn: () => void;
   selectSquare: (index: Index) => void;
   moveSelectedSquare: (index: Index) => void;
 };
@@ -21,7 +23,9 @@ const initBoard: (Piece | null)[][] = [
 
 export const useGameStore = create<GameState>((set, get) => ({
   board: initBoard,
+  turn: "w",
   selectedSquare: null,
+  changeTurn: () => set((state) => ({ turn: state.turn === "w" ? "b" : "w" })),
   selectSquare: (index: Index) => set({ selectedSquare: index }),
   moveSelectedSquare: (index: Index) => {
     const selectedSquare = get().selectedSquare;

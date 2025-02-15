@@ -1,5 +1,5 @@
-import { useShallow } from "zustand/shallow";
 import { useGameStore } from "../store/gameStore.ts";
+import isValidMove from "../isValidMove.ts";
 import type { Index, Piece } from "../types.ts";
 
 type SquareProps = {
@@ -10,17 +10,20 @@ type SquareProps = {
 };
 
 export default function Square({ index, bgColor, piece, img }: SquareProps) {
-  const { selectedSquare, selectSquare, moveSelectedSquare } = useGameStore(
-    useShallow((state) => ({
-      selectedSquare: state.selectedSquare,
-      selectSquare: state.selectSquare,
-      moveSelectedSquare: state.moveSelectedSquare,
-    })),
-  );
+  const {
+    board,
+    turn,
+    selectedSquare,
+    changeTurn,
+    selectSquare,
+    moveSelectedSquare,
+  } = useGameStore.getState();
 
   function handleClick() {
-    if (selectedSquare) moveSelectedSquare(index);
-    else selectSquare(index);
+    if (selectedSquare && isValidMove(board, turn, selectedSquare, index)) {
+      moveSelectedSquare(index);
+      changeTurn();
+    } else selectSquare(index);
   }
 
   if (piece && img)
