@@ -17,7 +17,7 @@ export default function Square({ index, bgColor, piece, img }: SquareProps) {
     changeTurn,
     selectSquare,
     moveSelectedSquare,
-  } = useGameStore.getState();
+  } = useGameStore((state) => state);
 
   function handleClick() {
     if (selectedSquare && isValidMove(board, turn, selectedSquare, index)) {
