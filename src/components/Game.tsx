@@ -1,3 +1,4 @@
+import { useShallow } from "zustand/shallow";
 import { useGameStore } from "../store/gameStore.ts";
 import Square from "./Square.tsx";
 import img_bishop_b from "../assets/images/Chess_bdt45.svg";
@@ -12,10 +13,25 @@ import img_queen_b from "../assets/images/Chess_qdt45.svg";
 import img_queen_w from "../assets/images/Chess_qlt45.svg";
 import img_rook_b from "../assets/images/Chess_rdt45.svg";
 import img_rook_w from "../assets/images/Chess_rlt45.svg";
-import type { Piece } from "../types.ts";
+import type { Index, Piece } from "../types.ts";
 
 export default function Game() {
-  const board = useGameStore((state) => state.board);
+  const { board, selectedSquare } = useGameStore(
+    useShallow((state) => ({
+      board: state.board,
+      selectedSquare: state.selectedSquare,
+    })),
+  );
+
+  function isSelected(index: Index) {
+    if (
+      selectedSquare &&
+      selectedSquare.i === index.i &&
+      selectedSquare.j === index.j
+    )
+      return true;
+    else return false;
+  }
 
   function getBgColor(i: number, j: number) {
     if (i % 2 === 0) {
@@ -66,6 +82,7 @@ export default function Game() {
             <Square
               key={j}
               index={{ i, j }}
+              isSelected={isSelected({ i, j })}
               bgColor={getBgColor(i, j)}
               piece={square}
               img={getPieceImg(square as Piece)}

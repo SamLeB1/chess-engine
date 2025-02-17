@@ -4,12 +4,19 @@ import type { Index, Piece } from "../types.ts";
 
 type SquareProps = {
   index: Index;
+  isSelected: boolean;
   bgColor: "light" | "dark";
   piece: Piece | null;
   img: string | null;
 };
 
-export default function Square({ index, bgColor, piece, img }: SquareProps) {
+export default function Square({
+  index,
+  isSelected,
+  bgColor,
+  piece,
+  img,
+}: SquareProps) {
   const {
     board,
     turn,
@@ -29,7 +36,7 @@ export default function Square({ index, bgColor, piece, img }: SquareProps) {
   if (piece && img)
     return (
       <div
-        className={`flex h-16 w-16 items-center justify-center ${bgColor === "light" ? "bg-lightsquare" : "bg-darksquare"}`}
+        className={`flex h-16 w-16 cursor-pointer items-center justify-center ${isSelected ? "bg-yellow-300" : bgColor === "light" ? "bg-lightsquare" : "bg-darksquare"}`}
         onClick={handleClick}
       >
         <img className="h-15 w-15" src={img} alt="" />

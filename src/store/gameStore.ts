@@ -26,7 +26,20 @@ export const useGameStore = create<GameState>((set, get) => ({
   turn: "w",
   selectedSquare: null,
   changeTurn: () => set((state) => ({ turn: state.turn === "w" ? "b" : "w" })),
-  selectSquare: (index: Index) => set({ selectedSquare: index }),
+  selectSquare: (index: Index) => {
+    const selectedSquare = get().selectedSquare;
+    if (
+      selectedSquare &&
+      selectedSquare.i === index.i &&
+      selectedSquare.j === index.j
+    ) {
+      set({ selectedSquare: null });
+      return;
+    }
+    const piece = get().board[index.i][index.j];
+    if (piece) set({ selectedSquare: index });
+    else set({ selectedSquare: null });
+  },
   moveSelectedSquare: (index: Index) => {
     const selectedSquare = get().selectedSquare;
     if (!selectedSquare) return;
