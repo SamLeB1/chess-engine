@@ -33,7 +33,7 @@ function isValidMovePawn(
   return false;
 }
 
-export default function isValidMove(
+export function isValidMove(
   board: (Piece | null)[][],
   turn: "w" | "b",
   start: Index,
@@ -59,4 +59,16 @@ export default function isValidMove(
     default:
       return false;
   }
+}
+
+export function getValidMoves(
+  board: (Piece | null)[][],
+  turn: "w" | "b",
+  start: Index,
+) {
+  let validMoves: Index[] = [];
+  for (let i = 0; i < 8; i++)
+    for (let j = 0; j < 8; j++)
+      if (isValidMove(board, turn, start, { i, j })) validMoves.push({ i, j });
+  return validMoves;
 }

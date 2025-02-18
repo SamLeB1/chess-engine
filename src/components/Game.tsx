@@ -1,6 +1,8 @@
+import { useEffect, useState } from "react";
 import { useShallow } from "zustand/shallow";
 import { useGameStore } from "../store/gameStore.ts";
 import Square from "./Square.tsx";
+import { getValidMoves } from "../isValidMove.ts";
 import img_bishop_b from "../assets/images/Chess_bdt45.svg";
 import img_bishop_w from "../assets/images/Chess_blt45.svg";
 import img_king_b from "../assets/images/Chess_kdt45.svg";
@@ -16,9 +18,11 @@ import img_rook_w from "../assets/images/Chess_rlt45.svg";
 import type { Index, Piece } from "../types.ts";
 
 export default function Game() {
-  const { board, selectedSquare } = useGameStore(
+  const [validMoves, setValidMoves] = useState<Index[]>([]);
+  const { board, turn, selectedSquare } = useGameStore(
     useShallow((state) => ({
       board: state.board,
+      turn: state.turn,
       selectedSquare: state.selectedSquare,
     })),
   );
@@ -31,6 +35,14 @@ export default function Game() {
     )
       return true;
     else return false;
+  }
+
+  function getMoveIndicator(index: Index) {
+    for (let i = 0; i < validMoves.length; i++)
+      if (validMoves[i].i === index.i && validMoves[i].j === index.j)
+        if (board[index.i][index.j]) return "ring";
+        else return "dot";
+    return null;
   }
 
   function getBgColor(i: number, j: number) {
@@ -74,6 +86,12 @@ export default function Game() {
     }
   }
 
+  useEffect(() => {
+    if (selectedSquare)
+      setValidMoves(getValidMoves(board, turn, selectedSquare));
+    else setValidMoves([]);
+  }, [selectedSquare]);
+
   return (
     <div>
       {board.map((row, i) => (
@@ -83,6 +101,7 @@ export default function Game() {
               key={j}
               index={{ i, j }}
               isSelected={isSelected({ i, j })}
+              moveIndicator={getMoveIndicator({ i, j })}
               bgColor={getBgColor(i, j)}
               piece={square}
               img={getPieceImg(square as Piece)}
