@@ -7,6 +7,13 @@ function getMovement(start: Index, end: Index) {
   };
 }
 
+function getDistance(start: Index, end: Index) {
+  return {
+    x: Math.abs(end.j - start.j),
+    y: Math.abs(end.i - start.i),
+  };
+}
+
 function isValidMovePawn(
   board: (Piece | null)[][],
   turn: "w" | "b",
@@ -33,6 +40,23 @@ function isValidMovePawn(
   return false;
 }
 
+function isValidMoveKnight(
+  board: (Piece | null)[][],
+  turn: "w" | "b",
+  start: Index,
+  end: Index,
+) {
+  const distance = getDistance(start, end);
+  if (
+    (distance.x === 1 && distance.y === 2) ||
+    (distance.x === 2 && distance.y === 1)
+  ) {
+    const endPiece = board[end.i][end.j];
+    if (!endPiece || endPiece[0] !== turn) return true;
+  }
+  return false;
+}
+
 export function isValidMove(
   board: (Piece | null)[][],
   turn: "w" | "b",
@@ -49,7 +73,7 @@ export function isValidMove(
     case "1":
       return false;
     case "2":
-      return false;
+      return isValidMoveKnight(board, turn, start, end);
     case "3":
       return false;
     case "4":
