@@ -14,6 +14,25 @@ function getDistance(start: Index, end: Index) {
   };
 }
 
+function getDirection(start: Index, end: Index) {
+  const movement = getMovement(start, end);
+  return {
+    x: movement.x === 0 ? 0 : movement.x / Math.abs(movement.x),
+    y: movement.y === 0 ? 0 : movement.y / Math.abs(movement.y),
+  };
+}
+
+function isEmptyDiagonal(board: (Piece | null)[][], start: Index, end: Index) {
+  const distance = getDistance(start, end);
+  if (distance.x !== distance.y) return false;
+  if (distance.x < 2) return true;
+  const direction = getDirection(start, end);
+  for (let i = 1; i < distance.x; i++)
+    if (board[start.i + i * direction.y][start.j + i * direction.x])
+      return false;
+  return true;
+}
+
 function isValidMovePawn(
   board: (Piece | null)[][],
   turn: "w" | "b",
@@ -57,6 +76,18 @@ function isValidMoveKnight(
   return false;
 }
 
+function isValidMoveBishop(
+  board: (Piece | null)[][],
+  turn: "w" | "b",
+  start: Index,
+  end: Index,
+) {
+  const endPiece = board[end.i][end.j];
+  if ((!endPiece || endPiece[0] !== turn) && isEmptyDiagonal(board, start, end))
+    return true;
+  else return false;
+}
+
 export function isValidMove(
   board: (Piece | null)[][],
   turn: "w" | "b",
@@ -75,7 +106,7 @@ export function isValidMove(
     case "2":
       return isValidMoveKnight(board, turn, start, end);
     case "3":
-      return false;
+      return isValidMoveBishop(board, turn, start, end);
     case "4":
       return false;
     case "5":
