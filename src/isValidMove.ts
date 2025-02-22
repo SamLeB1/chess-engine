@@ -33,6 +33,18 @@ function isEmptyDiagonal(board: (Piece | null)[][], start: Index, end: Index) {
   return true;
 }
 
+function isEmptyRowOrCol(board: (Piece | null)[][], start: Index, end: Index) {
+  const distance = getDistance(start, end);
+  if (distance.x !== 0 && distance.y !== 0) return false;
+  const totalDistance = distance.x + distance.y;
+  if (totalDistance < 2) return true;
+  const direction = getDirection(start, end);
+  for (let i = 1; i < totalDistance; i++)
+    if (board[start.i + i * direction.y][start.j + i * direction.x])
+      return false;
+  return true;
+}
+
 function isValidMovePawn(
   board: (Piece | null)[][],
   turn: "w" | "b",
@@ -88,6 +100,18 @@ function isValidMoveBishop(
   else return false;
 }
 
+function isValidMoveRook(
+  board: (Piece | null)[][],
+  turn: "w" | "b",
+  start: Index,
+  end: Index,
+) {
+  const endPiece = board[end.i][end.j];
+  if ((!endPiece || endPiece[0] !== turn) && isEmptyRowOrCol(board, start, end))
+    return true;
+  else return false;
+}
+
 export function isValidMove(
   board: (Piece | null)[][],
   turn: "w" | "b",
@@ -102,7 +126,7 @@ export function isValidMove(
     case "0":
       return isValidMovePawn(board, turn, start, end);
     case "1":
-      return false;
+      return isValidMoveRook(board, turn, start, end);
     case "2":
       return isValidMoveKnight(board, turn, start, end);
     case "3":
