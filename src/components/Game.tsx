@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { useShallow } from "zustand/shallow";
 import { useGameStore } from "../store/gameStore.ts";
 import Square from "./Square.tsx";
@@ -18,7 +17,6 @@ import img_rook_w from "../assets/images/Chess_rlt45.svg";
 import type { Index, Piece } from "../types.ts";
 
 export default function Game() {
-  const [validMoves, setValidMoves] = useState<Index[]>([]);
   const { board, turn, selectedSquare } = useGameStore(
     useShallow((state) => ({
       board: state.board,
@@ -26,6 +24,9 @@ export default function Game() {
       selectedSquare: state.selectedSquare,
     })),
   );
+  const validMoves = selectedSquare
+    ? getValidMoves(board, turn, selectedSquare)
+    : [];
 
   function isSelected(index: Index) {
     if (
@@ -85,12 +86,6 @@ export default function Game() {
         return null;
     }
   }
-
-  useEffect(() => {
-    if (selectedSquare)
-      setValidMoves(getValidMoves(board, turn, selectedSquare));
-    else setValidMoves([]);
-  }, [selectedSquare]);
 
   return (
     <div>

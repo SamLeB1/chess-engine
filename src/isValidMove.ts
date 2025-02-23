@@ -112,6 +112,21 @@ function isValidMoveRook(
   else return false;
 }
 
+function isValidMoveQueen(
+  board: (Piece | null)[][],
+  turn: "w" | "b",
+  start: Index,
+  end: Index,
+) {
+  const endPiece = board[end.i][end.j];
+  if (
+    (!endPiece || endPiece[0] !== turn) &&
+    (isEmptyDiagonal(board, start, end) || isEmptyRowOrCol(board, start, end))
+  )
+    return true;
+  else return false;
+}
+
 export function isValidMove(
   board: (Piece | null)[][],
   turn: "w" | "b",
@@ -132,7 +147,7 @@ export function isValidMove(
     case "3":
       return isValidMoveBishop(board, turn, start, end);
     case "4":
-      return false;
+      return isValidMoveQueen(board, turn, start, end);
     case "5":
       return false;
     default:
