@@ -127,6 +127,19 @@ function isValidMoveQueen(
   else return false;
 }
 
+function isValidMoveKing(
+  board: (Piece | null)[][],
+  turn: "w" | "b",
+  start: Index,
+  end: Index,
+) {
+  const endPiece = board[end.i][end.j];
+  const distance = getDistance(start, end);
+  if ((!endPiece || endPiece[0] !== turn) && distance.x < 2 && distance.y < 2)
+    return true;
+  else return false;
+}
+
 export function isValidMove(
   board: (Piece | null)[][],
   turn: "w" | "b",
@@ -149,7 +162,7 @@ export function isValidMove(
     case "4":
       return isValidMoveQueen(board, turn, start, end);
     case "5":
-      return false;
+      return isValidMoveKing(board, turn, start, end);
     default:
       return false;
   }
