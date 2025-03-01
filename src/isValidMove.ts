@@ -1,5 +1,11 @@
 import { Index, Piece } from "./types.ts";
 
+function includesIndex(arr: Index[], index: Index) {
+  for (let i = 0; i < arr.length; i++)
+    if (arr[i].i === index.i && arr[i].j === index.j) return true;
+  return false;
+}
+
 function getMovement(start: Index, end: Index) {
   return {
     x: end.j - start.j,
@@ -43,6 +49,30 @@ function isEmptyRowOrCol(board: (Piece | null)[][], start: Index, end: Index) {
     if (board[start.i + i * direction.y][start.j + i * direction.x])
       return false;
   return true;
+}
+
+function getVision(board: (Piece | null)[][], player: "w" | "b") {
+  let vision: Index[] = [];
+  for (let i = 0; i < 8; i++)
+    for (let j = 0; j < 8; j++) {
+      const piece = board[i][j];
+      if (!piece || piece[0] !== player) continue;
+      const pieceVision =
+        piece[1] === "0"
+          ? []
+          : piece[1] === "1"
+            ? []
+            : piece[1] === "2"
+              ? []
+              : piece[1] === "3"
+                ? []
+                : piece[1] === "4"
+                  ? []
+                  : [];
+      for (let k = 0; k < pieceVision.length; k++)
+        if (!includesIndex(vision, pieceVision[k])) vision.push(pieceVision[k]);
+    }
+  return vision;
 }
 
 function isValidMovePawn(
