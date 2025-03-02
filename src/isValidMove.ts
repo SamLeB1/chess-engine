@@ -55,7 +55,7 @@ function isEmptyRowOrCol(board: (Piece | null)[][], start: Index, end: Index) {
   return true;
 }
 
-function getVisionDiagonal(
+function getVisionLine(
   board: (Piece | null)[][],
   index: Index,
   direction: Direction,
@@ -106,10 +106,32 @@ function getVisionKnight(index: Index) {
 
 function getVisionBishop(board: (Piece | null)[][], index: Index) {
   return [
-    ...getVisionDiagonal(board, index, { x: -1, y: -1 }),
-    ...getVisionDiagonal(board, index, { x: 1, y: -1 }),
-    ...getVisionDiagonal(board, index, { x: -1, y: 1 }),
-    ...getVisionDiagonal(board, index, { x: 1, y: 1 }),
+    ...getVisionLine(board, index, { x: -1, y: -1 }),
+    ...getVisionLine(board, index, { x: 1, y: -1 }),
+    ...getVisionLine(board, index, { x: -1, y: 1 }),
+    ...getVisionLine(board, index, { x: 1, y: 1 }),
+  ];
+}
+
+function getVisionRook(board: (Piece | null)[][], index: Index) {
+  return [
+    ...getVisionLine(board, index, { x: 0, y: -1 }),
+    ...getVisionLine(board, index, { x: 0, y: 1 }),
+    ...getVisionLine(board, index, { x: -1, y: 0 }),
+    ...getVisionLine(board, index, { x: 1, y: 0 }),
+  ];
+}
+
+function getVisionQueen(board: (Piece | null)[][], index: Index) {
+  return [
+    ...getVisionLine(board, index, { x: -1, y: -1 }),
+    ...getVisionLine(board, index, { x: 1, y: -1 }),
+    ...getVisionLine(board, index, { x: -1, y: 1 }),
+    ...getVisionLine(board, index, { x: 1, y: 1 }),
+    ...getVisionLine(board, index, { x: 0, y: -1 }),
+    ...getVisionLine(board, index, { x: 0, y: 1 }),
+    ...getVisionLine(board, index, { x: -1, y: 0 }),
+    ...getVisionLine(board, index, { x: 1, y: 0 }),
   ];
 }
 
@@ -144,13 +166,13 @@ function getVision(board: (Piece | null)[][], player: "w" | "b") {
         piece[1] === "0"
           ? getVisionPawn(player, { i, j })
           : piece[1] === "1"
-            ? []
+            ? getVisionRook(board, { i, j })
             : piece[1] === "2"
               ? getVisionKnight({ i, j })
               : piece[1] === "3"
                 ? getVisionBishop(board, { i, j })
                 : piece[1] === "4"
-                  ? []
+                  ? getVisionQueen(board, { i, j })
                   : getVisionKing({ i, j });
       for (let k = 0; k < pieceVision.length; k++)
         if (!includesIndex(vision, pieceVision[k])) vision.push(pieceVision[k]);
