@@ -1,4 +1,4 @@
-import { Index, Piece } from "./types.ts";
+import { Index, Direction, Piece } from "./types.ts";
 
 function isValidIndex(index: Index) {
   return index.i >= 0 && index.j >= 0 && index.i <= 7 && index.j <= 7;
@@ -55,6 +55,24 @@ function isEmptyRowOrCol(board: (Piece | null)[][], start: Index, end: Index) {
   return true;
 }
 
+function getVisionDiagonal(
+  board: (Piece | null)[][],
+  index: Index,
+  direction: Direction,
+) {
+  let vision: Index[] = [];
+  let current = {
+    i: index.i + direction.y,
+    j: index.j + direction.x,
+  };
+  while (isValidIndex(current)) {
+    vision.push({ ...current });
+    if (board[current.i][current.j]) break;
+    (current.i += direction.y), (current.j += direction.x);
+  }
+  return vision;
+}
+
 function getVisionPawn(player: "w" | "b", index: Index) {
   const direction = player === "w" ? -1 : 1;
   let vision: Index[] = [];
@@ -84,6 +102,15 @@ function getVisionKnight(index: Index) {
   if (isValidIndex({ i: index.i + 2, j: index.j + 1 }))
     vision.push({ i: index.i + 2, j: index.j + 1 });
   return vision;
+}
+
+function getVisionBishop(board: (Piece | null)[][], index: Index) {
+  return [
+    ...getVisionDiagonal(board, index, { x: -1, y: -1 }),
+    ...getVisionDiagonal(board, index, { x: 1, y: -1 }),
+    ...getVisionDiagonal(board, index, { x: -1, y: 1 }),
+    ...getVisionDiagonal(board, index, { x: 1, y: 1 }),
+  ];
 }
 
 function getVisionKing(index: Index) {
@@ -121,7 +148,7 @@ function getVision(board: (Piece | null)[][], player: "w" | "b") {
             : piece[1] === "2"
               ? getVisionKnight({ i, j })
               : piece[1] === "3"
-                ? []
+                ? getVisionBishop(board, { i, j })
                 : piece[1] === "4"
                   ? []
                   : getVisionKing({ i, j });
