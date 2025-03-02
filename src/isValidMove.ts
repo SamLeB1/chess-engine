@@ -1,5 +1,9 @@
 import { Index, Piece } from "./types.ts";
 
+function isValidIndex(index: Index) {
+  return index.i >= 0 && index.j >= 0 && index.i <= 7 && index.j <= 7;
+}
+
 function includesIndex(arr: Index[], index: Index) {
   for (let i = 0; i < arr.length; i++)
     if (arr[i].i === index.i && arr[i].j === index.j) return true;
@@ -51,6 +55,58 @@ function isEmptyRowOrCol(board: (Piece | null)[][], start: Index, end: Index) {
   return true;
 }
 
+function getVisionPawn(player: "w" | "b", index: Index) {
+  const direction = player === "w" ? -1 : 1;
+  let vision: Index[] = [];
+  if (isValidIndex({ i: index.i + direction, j: index.j - 1 }))
+    vision.push({ i: index.i + direction, j: index.j - 1 });
+  if (isValidIndex({ i: index.i + direction, j: index.j + 1 }))
+    vision.push({ i: index.i + direction, j: index.j + 1 });
+  return vision;
+}
+
+function getVisionKnight(index: Index) {
+  let vision: Index[] = [];
+  if (isValidIndex({ i: index.i - 2, j: index.j - 1 }))
+    vision.push({ i: index.i - 2, j: index.j - 1 });
+  if (isValidIndex({ i: index.i - 2, j: index.j + 1 }))
+    vision.push({ i: index.i - 2, j: index.j + 1 });
+  if (isValidIndex({ i: index.i - 1, j: index.j - 2 }))
+    vision.push({ i: index.i - 1, j: index.j - 2 });
+  if (isValidIndex({ i: index.i - 1, j: index.j + 2 }))
+    vision.push({ i: index.i - 1, j: index.j + 2 });
+  if (isValidIndex({ i: index.i + 1, j: index.j - 2 }))
+    vision.push({ i: index.i + 1, j: index.j - 2 });
+  if (isValidIndex({ i: index.i + 1, j: index.j + 2 }))
+    vision.push({ i: index.i + 1, j: index.j + 2 });
+  if (isValidIndex({ i: index.i + 2, j: index.j - 1 }))
+    vision.push({ i: index.i + 2, j: index.j - 1 });
+  if (isValidIndex({ i: index.i + 2, j: index.j + 1 }))
+    vision.push({ i: index.i + 2, j: index.j + 1 });
+  return vision;
+}
+
+function getVisionKing(index: Index) {
+  let vision: Index[] = [];
+  if (isValidIndex({ i: index.i - 1, j: index.j - 1 }))
+    vision.push({ i: index.i - 1, j: index.j - 1 });
+  if (isValidIndex({ i: index.i - 1, j: index.j }))
+    vision.push({ i: index.i - 1, j: index.j });
+  if (isValidIndex({ i: index.i - 1, j: index.j + 1 }))
+    vision.push({ i: index.i - 1, j: index.j + 1 });
+  if (isValidIndex({ i: index.i, j: index.j - 1 }))
+    vision.push({ i: index.i, j: index.j - 1 });
+  if (isValidIndex({ i: index.i, j: index.j + 1 }))
+    vision.push({ i: index.i, j: index.j + 1 });
+  if (isValidIndex({ i: index.i + 1, j: index.j - 1 }))
+    vision.push({ i: index.i + 1, j: index.j - 1 });
+  if (isValidIndex({ i: index.i + 1, j: index.j }))
+    vision.push({ i: index.i + 1, j: index.j });
+  if (isValidIndex({ i: index.i + 1, j: index.j + 1 }))
+    vision.push({ i: index.i + 1, j: index.j + 1 });
+  return vision;
+}
+
 function getVision(board: (Piece | null)[][], player: "w" | "b") {
   let vision: Index[] = [];
   for (let i = 0; i < 8; i++)
@@ -59,16 +115,16 @@ function getVision(board: (Piece | null)[][], player: "w" | "b") {
       if (!piece || piece[0] !== player) continue;
       const pieceVision =
         piece[1] === "0"
-          ? []
+          ? getVisionPawn(player, { i, j })
           : piece[1] === "1"
             ? []
             : piece[1] === "2"
-              ? []
+              ? getVisionKnight({ i, j })
               : piece[1] === "3"
                 ? []
                 : piece[1] === "4"
                   ? []
-                  : [];
+                  : getVisionKing({ i, j });
       for (let k = 0; k < pieceVision.length; k++)
         if (!includesIndex(vision, pieceVision[k])) vision.push(pieceVision[k]);
     }
