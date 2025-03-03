@@ -10,6 +10,13 @@ function includesIndex(arr: Index[], index: Index) {
   return false;
 }
 
+function getUpdatedBoard(board: (Piece | null)[][], start: Index, end: Index) {
+  let updatedBoard: (Piece | null)[][] = JSON.parse(JSON.stringify(board));
+  updatedBoard[end.i][end.j] = updatedBoard[start.i][start.j];
+  updatedBoard[start.i][start.j] = null;
+  return updatedBoard;
+}
+
 function getMovement(start: Index, end: Index) {
   return {
     x: end.j - start.j,
@@ -180,6 +187,22 @@ function getVision(board: (Piece | null)[][], player: "w" | "b") {
   return vision;
 }
 
+function getKingIndex(board: (Piece | null)[][], player: "w" | "b") {
+  for (let i = 0; i < 8; i++)
+    for (let j = 0; j < 8; j++)
+      if (board[i][j] === player + "5") return { i, j };
+  return null;
+}
+
+function isInCheck(board: (Piece | null)[][], player: "w" | "b") {
+  const kingIndex = getKingIndex(board, player);
+  if (!kingIndex) return false;
+  const enemy = player === "w" ? "b" : "w";
+  const enemyVision = getVision(board, enemy);
+  if (includesIndex(enemyVision, kingIndex)) return true;
+  else return false;
+}
+
 function isValidMovePawn(
   board: (Piece | null)[][],
   turn: "w" | "b",
@@ -285,6 +308,7 @@ export function isValidMove(
   const piece = board[start.i][start.j];
   if (!piece) return false;
   if (piece[0] !== turn) return false;
+  if (isInCheck(getUpdatedBoard(board, start, end), turn)) return false;
   switch (piece[1]) {
     case "0":
       return isValidMovePawn(board, turn, start, end);
