@@ -23,14 +23,28 @@ export default function Square({
     board,
     turn,
     selectedSquare,
+    castlingRights,
     changeTurn,
     selectSquare,
     moveSelectedSquare,
+    removeCastlingRights,
   } = useGameStore((state) => state);
+
+  function getSideToRemoveCastlingRights(index: Index) {
+    const { kingside, queenside } = castlingRights[turn];
+    if (!kingside && !queenside) return null;
+    const row = turn === "w" ? 7 : 0;
+    if (index.i === row && index.j === 7 && kingside) return "kingside";
+    else if (index.i === row && index.j === 0 && queenside) return "queenside";
+    else if (index.i === row && index.j === 4) return "all";
+    else return null;
+  }
 
   function handleClick() {
     if (selectedSquare && isValidMove(board, turn, selectedSquare, index)) {
       moveSelectedSquare(index);
+      const side = getSideToRemoveCastlingRights(selectedSquare);
+      if (side) removeCastlingRights(side);
       changeTurn();
     } else selectSquare(index);
   }
