@@ -1,16 +1,5 @@
 import { create } from "zustand";
-import type { Index, Piece } from "../types.ts";
-
-type CastlingRights = {
-  w: {
-    kingside: boolean;
-    queenside: boolean;
-  };
-  b: {
-    kingside: boolean;
-    queenside: boolean;
-  };
-};
+import type { Index, Piece, CastlingRights } from "../types.ts";
 
 type GameState = {
   board: (Piece | null)[][];

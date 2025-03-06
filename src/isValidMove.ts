@@ -1,4 +1,4 @@
-import { Index, Direction, Piece } from "./types.ts";
+import { Index, Direction, Piece, CastlingRightsPlayer } from "./types.ts";
 
 function isValidIndex(index: Index) {
   return index.i >= 0 && index.j >= 0 && index.i <= 7 && index.j <= 7;
@@ -303,6 +303,7 @@ export function isValidMove(
   turn: "w" | "b",
   start: Index,
   end: Index,
+  castlingRights: CastlingRightsPlayer,
 ) {
   if (start.i === end.i && start.j === end.j) return false;
   const piece = board[start.i][start.j];
@@ -331,10 +332,12 @@ export function getValidMoves(
   board: (Piece | null)[][],
   turn: "w" | "b",
   start: Index,
+  castlingRights: CastlingRightsPlayer,
 ) {
   let validMoves: Index[] = [];
   for (let i = 0; i < 8; i++)
     for (let j = 0; j < 8; j++)
-      if (isValidMove(board, turn, start, { i, j })) validMoves.push({ i, j });
+      if (isValidMove(board, turn, start, { i, j }, castlingRights))
+        validMoves.push({ i, j });
   return validMoves;
 }

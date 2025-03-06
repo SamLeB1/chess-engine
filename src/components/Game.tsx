@@ -17,15 +17,16 @@ import img_rook_w from "../assets/images/Chess_rlt45.svg";
 import type { Index, Piece } from "../types.ts";
 
 export default function Game() {
-  const { board, turn, selectedSquare } = useGameStore(
+  const { board, turn, selectedSquare, castlingRights } = useGameStore(
     useShallow((state) => ({
       board: state.board,
       turn: state.turn,
       selectedSquare: state.selectedSquare,
+      castlingRights: state.castlingRights,
     })),
   );
   const validMoves = selectedSquare
-    ? getValidMoves(board, turn, selectedSquare)
+    ? getValidMoves(board, turn, selectedSquare, castlingRights[turn])
     : [];
 
   function isSelected(index: Index) {

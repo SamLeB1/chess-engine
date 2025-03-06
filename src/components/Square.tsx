@@ -41,7 +41,10 @@ export default function Square({
   }
 
   function handleClick() {
-    if (selectedSquare && isValidMove(board, turn, selectedSquare, index)) {
+    if (
+      selectedSquare &&
+      isValidMove(board, turn, selectedSquare, index, castlingRights[turn])
+    ) {
       moveSelectedSquare(index);
       const side = getSideToRemoveCastlingRights(selectedSquare);
       if (side) removeCastlingRights(side);

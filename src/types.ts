@@ -21,3 +21,19 @@ export type Piece =
   | "b3"
   | "b4"
   | "b5";
+
+export type CastlingRights = {
+  w: {
+    kingside: boolean;
+    queenside: boolean;
+  };
+  b: {
+    kingside: boolean;
+    queenside: boolean;
+  };
+};
+
+export type CastlingRightsPlayer = {
+  kingside: boolean;
+  queenside: boolean;
+};
