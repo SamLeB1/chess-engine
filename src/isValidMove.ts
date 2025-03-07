@@ -285,15 +285,58 @@ function isValidMoveQueen(
   else return false;
 }
 
+function isValidMoveCastle(
+  board: (Piece | null)[][],
+  turn: "w" | "b",
+  start: Index,
+  end: Index,
+  castlingRights: CastlingRightsPlayer,
+) {
+  const { kingside, queenside } = castlingRights;
+  if (!kingside && !queenside) return false;
+  const direction = getDirection(start, end);
+  if (
+    isInCheck(board, turn) ||
+    isInCheck(
+      getUpdatedBoard(board, start, { i: start.i, j: start.j + direction.x }),
+      turn,
+    )
+  )
+    return false;
+  if (
+    kingside &&
+    direction.x === 1 &&
+    !board[start.i][start.j + 1] &&
+    !board[start.i][start.j + 2]
+  )
+    return true;
+  else if (
+    queenside &&
+    direction.x === -1 &&
+    !board[start.i][start.j - 1] &&
+    !board[start.i][start.j - 2] &&
+    !board[start.i][start.j - 3]
+  )
+    return true;
+  else return false;
+}
+
 function isValidMoveKing(
   board: (Piece | null)[][],
   turn: "w" | "b",
   start: Index,
   end: Index,
+  castlingRights: CastlingRightsPlayer,
 ) {
   const endPiece = board[end.i][end.j];
   const distance = getDistance(start, end);
   if ((!endPiece || endPiece[0] !== turn) && distance.x < 2 && distance.y < 2)
+    return true;
+  else if (
+    distance.x === 2 &&
+    distance.y === 0 &&
+    isValidMoveCastle(board, turn, start, end, castlingRights)
+  )
     return true;
   else return false;
 }
@@ -322,7 +365,7 @@ export function isValidMove(
     case "4":
       return isValidMoveQueen(board, turn, start, end);
     case "5":
-      return isValidMoveKing(board, turn, start, end);
+      return isValidMoveKing(board, turn, start, end, castlingRights);
     default:
       return false;
   }
