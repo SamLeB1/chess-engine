@@ -1,7 +1,7 @@
 import { useShallow } from "zustand/shallow";
 import { useGameStore } from "../store/gameStore.ts";
 import Square from "./Square.tsx";
-import { getValidMoves } from "../isValidMove.ts";
+import { getValidMoves } from "../utils/isValidMove.ts";
 import img_bishop_b from "../assets/images/Chess_bdt45.svg";
 import img_bishop_w from "../assets/images/Chess_blt45.svg";
 import img_king_b from "../assets/images/Chess_kdt45.svg";

@@ -1,5 +1,5 @@
 import { useGameStore } from "../store/gameStore.ts";
-import { isValidMove } from "../isValidMove.ts";
+import { isValidMove } from "../utils/isValidMove.ts";
 import type { Index, Piece } from "../types.ts";
 
 type SquareProps = {

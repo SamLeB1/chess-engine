@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { getDistance, getDirection } from "../utils/index.ts";
 import type { Index, Piece, CastlingRights } from "../types.ts";
 
 type GameState = {
@@ -22,6 +23,13 @@ const initBoard: (Piece | null)[][] = [
   ["w0", "w0", "w0", "w0", "w0", "w0", "w0", "w0"],
   ["w1", "w2", "w3", "w4", "w5", "w3", "w2", "w1"],
 ];
+
+function isCastle(board: (Piece | null)[][], start: Index, end: Index) {
+  const piece = board[start.i][start.j];
+  const distance = getDistance(start, end);
+  if (piece && piece[1] === "5" && distance.x === 2) return true;
+  else return false;
+}
 
 export const useGameStore = create<GameState>((set, get) => ({
   board: initBoard,
@@ -55,12 +63,21 @@ export const useGameStore = create<GameState>((set, get) => ({
   moveSelectedSquare: (index: Index) => {
     const selectedSquare = get().selectedSquare;
     if (!selectedSquare) return;
-    let updatedBoard: (Piece | null)[][] = JSON.parse(
-      JSON.stringify(get().board),
-    );
+    const board = get().board;
+    let updatedBoard: (Piece | null)[][] = JSON.parse(JSON.stringify(board));
     updatedBoard[index.i][index.j] =
       updatedBoard[selectedSquare.i][selectedSquare.j];
     updatedBoard[selectedSquare.i][selectedSquare.j] = null;
+    if (isCastle(board, selectedSquare, index)) {
+      const direction = getDirection(selectedSquare, index);
+      if (direction.x === 1) {
+        updatedBoard[selectedSquare.i][5] = updatedBoard[selectedSquare.i][7];
+        updatedBoard[selectedSquare.i][7] = null;
+      } else {
+        updatedBoard[selectedSquare.i][3] = updatedBoard[selectedSquare.i][0];
+        updatedBoard[selectedSquare.i][0] = null;
+      }
+    }
     set({
       board: updatedBoard,
       selectedSquare: null,

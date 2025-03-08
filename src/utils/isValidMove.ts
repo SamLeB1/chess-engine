@@ -1,42 +1,17 @@
-import { Index, Direction, Piece, CastlingRightsPlayer } from "./types.ts";
-
-function isValidIndex(index: Index) {
-  return index.i >= 0 && index.j >= 0 && index.i <= 7 && index.j <= 7;
-}
-
-function includesIndex(arr: Index[], index: Index) {
-  for (let i = 0; i < arr.length; i++)
-    if (arr[i].i === index.i && arr[i].j === index.j) return true;
-  return false;
-}
+import {
+  isValidIndex,
+  includesIndex,
+  getMovement,
+  getDistance,
+  getDirection,
+} from "./index.ts";
+import { Index, Direction, Piece, CastlingRightsPlayer } from "../types.ts";
 
 function getUpdatedBoard(board: (Piece | null)[][], start: Index, end: Index) {
   let updatedBoard: (Piece | null)[][] = JSON.parse(JSON.stringify(board));
   updatedBoard[end.i][end.j] = updatedBoard[start.i][start.j];
   updatedBoard[start.i][start.j] = null;
   return updatedBoard;
-}
-
-function getMovement(start: Index, end: Index) {
-  return {
-    x: end.j - start.j,
-    y: end.i - start.i,
-  };
-}
-
-function getDistance(start: Index, end: Index) {
-  return {
-    x: Math.abs(end.j - start.j),
-    y: Math.abs(end.i - start.i),
-  };
-}
-
-function getDirection(start: Index, end: Index) {
-  const movement = getMovement(start, end);
-  return {
-    x: movement.x === 0 ? 0 : movement.x / Math.abs(movement.x),
-    y: movement.y === 0 ? 0 : movement.y / Math.abs(movement.y),
-  };
 }
 
 function isEmptyDiagonal(board: (Piece | null)[][], start: Index, end: Index) {
