@@ -30,14 +30,39 @@ export default function Square({
     removeCastlingRights,
   } = useGameStore((state) => state);
 
-  function getSideToRemoveCastlingRights(index: Index) {
+  function getSideToRemoveCastlingRights() {
+    if (!selectedSquare) return null;
     const { kingside, queenside } = castlingRights[turn];
     if (!kingside && !queenside) return null;
+
     const row = turn === "w" ? 7 : 0;
+    if (selectedSquare.i === row && selectedSquare.j === 7 && kingside)
+      return "kingside";
+    else if (selectedSquare.i === row && selectedSquare.j === 0 && queenside)
+      return "queenside";
+    else if (selectedSquare.i === row && selectedSquare.j === 4) return "all";
+    else return null;
+  }
+
+  function getSideToRemoveCastlingRightsEnemy() {
+    const enemy = turn === "w" ? "b" : "w";
+    const { kingside, queenside } = castlingRights[enemy];
+    if (!kingside && !queenside) return null;
+
+    const row = turn === "w" ? 0 : 7;
     if (index.i === row && index.j === 7 && kingside) return "kingside";
     else if (index.i === row && index.j === 0 && queenside) return "queenside";
-    else if (index.i === row && index.j === 4) return "all";
     else return null;
+  }
+
+  function handleCastlingRights() {
+    const side = getSideToRemoveCastlingRights();
+    if (side) removeCastlingRights(turn, side);
+    const sideEnemy = getSideToRemoveCastlingRightsEnemy();
+    if (sideEnemy) {
+      const enemy = turn === "w" ? "b" : "w";
+      removeCastlingRights(enemy, sideEnemy);
+    }
   }
 
   function handleClick() {
@@ -46,8 +71,7 @@ export default function Square({
       isValidMove(board, turn, selectedSquare, index, castlingRights[turn])
     ) {
       moveSelectedSquare(index);
-      const side = getSideToRemoveCastlingRights(selectedSquare);
-      if (side) removeCastlingRights(side);
+      handleCastlingRights();
       changeTurn();
     } else selectSquare(index);
   }

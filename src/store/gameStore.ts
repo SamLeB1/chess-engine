@@ -10,7 +10,10 @@ type GameState = {
   changeTurn: () => void;
   selectSquare: (index: Index) => void;
   moveSelectedSquare: (index: Index) => void;
-  removeCastlingRights: (side: "kingside" | "queenside" | "all") => void;
+  removeCastlingRights: (
+    player: "w" | "b",
+    side: "kingside" | "queenside" | "all",
+  ) => void;
 };
 
 const initBoard: (Piece | null)[][] = [
@@ -83,15 +86,17 @@ export const useGameStore = create<GameState>((set, get) => ({
       selectedSquare: null,
     });
   },
-  removeCastlingRights: (side: "kingside" | "queenside" | "all") => {
+  removeCastlingRights: (
+    player: "w" | "b",
+    side: "kingside" | "queenside" | "all",
+  ) => {
     let castlingRights: CastlingRights = JSON.parse(
       JSON.stringify(get().castlingRights),
     );
-    const turn = get().turn;
     if (side === "all") {
-      castlingRights[turn].kingside = false;
-      castlingRights[turn].queenside = false;
-    } else castlingRights[turn][side] = false;
+      castlingRights[player].kingside = false;
+      castlingRights[player].queenside = false;
+    } else castlingRights[player][side] = false;
     set({ castlingRights });
   },
 }));
