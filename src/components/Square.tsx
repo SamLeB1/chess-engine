@@ -23,6 +23,7 @@ export default function Square({
     board,
     turn,
     selectedSquare,
+    enPassantTarget,
     castlingRights,
     changeTurn,
     selectSquare,
@@ -68,7 +69,14 @@ export default function Square({
   function handleClick() {
     if (
       selectedSquare &&
-      isValidMove(board, turn, selectedSquare, index, castlingRights[turn])
+      isValidMove(
+        board,
+        turn,
+        selectedSquare,
+        index,
+        enPassantTarget,
+        castlingRights[turn],
+      )
     ) {
       moveSelectedSquare(index);
       handleCastlingRights();

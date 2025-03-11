@@ -1,5 +1,6 @@
 import {
   isValidIndex,
+  isEqualIndex,
   includesIndex,
   getMovement,
   getDistance,
@@ -183,6 +184,7 @@ function isValidMovePawn(
   turn: "w" | "b",
   start: Index,
   end: Index,
+  enPassantTarget: Index | null,
 ) {
   const movement = getMovement(start, end);
   const endPiece = board[end.i][end.j];
@@ -199,7 +201,11 @@ function isValidMovePawn(
     if (!board[start.i + direction][start.j] && !endPiece) return true;
   }
   if (Math.abs(movement.x) === 1 && movement.y === direction) {
-    if (endPiece && endPiece[0] !== turn) return true;
+    if (
+      (endPiece && endPiece[0] !== turn) ||
+      (enPassantTarget && isEqualIndex(enPassantTarget, end))
+    )
+      return true;
   }
   return false;
 }
@@ -321,6 +327,7 @@ export function isValidMove(
   turn: "w" | "b",
   start: Index,
   end: Index,
+  enPassantTarget: Index | null,
   castlingRights: CastlingRightsPlayer,
 ) {
   if (start.i === end.i && start.j === end.j) return false;
@@ -330,7 +337,7 @@ export function isValidMove(
   if (isInCheck(getUpdatedBoard(board, start, end), turn)) return false;
   switch (piece[1]) {
     case "0":
-      return isValidMovePawn(board, turn, start, end);
+      return isValidMovePawn(board, turn, start, end, enPassantTarget);
     case "1":
       return isValidMoveRook(board, turn, start, end);
     case "2":
@@ -350,12 +357,22 @@ export function getValidMoves(
   board: (Piece | null)[][],
   turn: "w" | "b",
   start: Index,
+  enPassantTarget: Index | null,
   castlingRights: CastlingRightsPlayer,
 ) {
   let validMoves: Index[] = [];
   for (let i = 0; i < 8; i++)
     for (let j = 0; j < 8; j++)
-      if (isValidMove(board, turn, start, { i, j }, castlingRights))
+      if (
+        isValidMove(
+          board,
+          turn,
+          start,
+          { i, j },
+          enPassantTarget,
+          castlingRights,
+        )
+      )
         validMoves.push({ i, j });
   return validMoves;
 }

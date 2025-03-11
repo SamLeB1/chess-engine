@@ -6,6 +6,7 @@ type GameState = {
   board: (Piece | null)[][];
   turn: "w" | "b";
   selectedSquare: Index | null;
+  enPassantTarget: Index | null;
   castlingRights: CastlingRights;
   changeTurn: () => void;
   selectSquare: (index: Index) => void;
@@ -27,6 +28,27 @@ const initBoard: (Piece | null)[][] = [
   ["w1", "w2", "w3", "w4", "w5", "w3", "w2", "w1"],
 ];
 
+function getEnPassantTarget(
+  board: (Piece | null)[][],
+  start: Index,
+  end: Index,
+) {
+  const piece = board[start.i][start.j];
+  if (!piece || piece[1] !== "0") return null;
+  const distance = getDistance(start, end);
+  if (distance.x !== 0 || distance.y !== 2) return null;
+  const direction = getDirection(start, end);
+  return { i: start.i + direction.y, j: start.j };
+}
+
+function isEnPassant(board: (Piece | null)[][], start: Index, end: Index) {
+  const piece = board[start.i][start.j];
+  const distance = getDistance(start, end);
+  if (piece && piece[1] === "0" && distance.x === 1 && !board[end.i][end.j])
+    return true;
+  else return false;
+}
+
 function isCastle(board: (Piece | null)[][], start: Index, end: Index) {
   const piece = board[start.i][start.j];
   const distance = getDistance(start, end);
@@ -38,6 +60,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   board: initBoard,
   turn: "w",
   selectedSquare: null,
+  enPassantTarget: null,
   castlingRights: {
     w: {
       kingside: true,
@@ -71,6 +94,10 @@ export const useGameStore = create<GameState>((set, get) => ({
     updatedBoard[index.i][index.j] =
       updatedBoard[selectedSquare.i][selectedSquare.j];
     updatedBoard[selectedSquare.i][selectedSquare.j] = null;
+    if (isEnPassant(board, selectedSquare, index)) {
+      const direction = getDirection(selectedSquare, index);
+      updatedBoard[selectedSquare.i][selectedSquare.j + direction.x] = null;
+    }
     if (isCastle(board, selectedSquare, index)) {
       const direction = getDirection(selectedSquare, index);
       if (direction.x === 1) {
@@ -84,6 +111,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     set({
       board: updatedBoard,
       selectedSquare: null,
+      enPassantTarget: getEnPassantTarget(board, selectedSquare, index),
     });
   },
   removeCastlingRights: (

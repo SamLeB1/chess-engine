@@ -4,6 +4,10 @@ export function isValidIndex(index: Index) {
   return index.i >= 0 && index.j >= 0 && index.i <= 7 && index.j <= 7;
 }
 
+export function isEqualIndex(index1: Index, index2: Index) {
+  return index1.i === index2.i && index1.j === index2.j;
+}
+
 export function includesIndex(arr: Index[], index: Index) {
   for (let i = 0; i < arr.length; i++)
     if (arr[i].i === index.i && arr[i].j === index.j) return true;
