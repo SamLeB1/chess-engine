@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { useGameStore } from "../store/gameStore.ts";
+import PromotionMenu from "./PromotionMenu.tsx";
 import { isValidMove } from "../utils/isValidMove.ts";
 import type { Index, Piece } from "../types.ts";
 
@@ -30,6 +32,9 @@ export default function Square({
     moveSelectedSquare,
     removeCastlingRights,
   } = useGameStore((state) => state);
+  const [isOpenPromotionMenu, setIsOpenPromotionMenu] = useState(
+    index.i === 2 && index.j === 0 ? true : false,
+  );
 
   function getSideToRemoveCastlingRights() {
     if (!selectedSquare) return null;
@@ -104,6 +109,9 @@ export default function Square({
       >
         {moveIndicator === "dot" && (
           <div className="absolute top-1/2 left-1/2 h-1/3 w-1/3 -translate-1/2 rounded-full bg-black opacity-20" />
+        )}
+        {isOpenPromotionMenu && (
+          <PromotionMenu pieceColor="w" isReversed={false} />
         )}
       </div>
     );
