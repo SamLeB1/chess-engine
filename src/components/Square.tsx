@@ -111,7 +111,11 @@ export default function Square({
           <div className="absolute top-1/2 left-1/2 h-1/3 w-1/3 -translate-1/2 rounded-full bg-black opacity-20" />
         )}
         {isOpenPromotionMenu && (
-          <PromotionMenu pieceColor="w" isReversed={false} />
+          <PromotionMenu
+            pieceColor="w"
+            isReversed={false}
+            setIsOpen={setIsOpenPromotionMenu}
+          />
         )}
       </div>
     );
