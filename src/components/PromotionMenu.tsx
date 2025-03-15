@@ -27,7 +27,7 @@ export default function PromotionMenu({
   return (
     <div
       ref={promotionMenuRef}
-      className={`absolute z-10 flex shadow-2xl ${isReversed ? "bottom-0 flex-col-reverse" : "flex-col"}`}
+      className={`absolute z-10 flex shadow-2xl ${isReversed ? "bottom-0 flex-col-reverse" : "top-0 flex-col"}`}
     >
       <button
         className="flex h-16 w-16 cursor-pointer items-center justify-center bg-white"
@@ -72,7 +72,10 @@ export default function PromotionMenu({
       <button
         className="flex h-8 w-16 cursor-pointer items-center justify-center bg-gray-200"
         type="button"
-        onClick={() => setIsOpen(false)}
+        onClick={(e) => {
+          setIsOpen(false);
+          e.stopPropagation();
+        }}
       >
         <MdClose size={20} />
       </button>

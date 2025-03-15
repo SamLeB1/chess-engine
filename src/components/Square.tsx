@@ -32,9 +32,16 @@ export default function Square({
     moveSelectedSquare,
     removeCastlingRights,
   } = useGameStore((state) => state);
-  const [isOpenPromotionMenu, setIsOpenPromotionMenu] = useState(
-    index.i === 2 && index.j === 0 ? true : false,
-  );
+  const [isOpenPromotionMenu, setIsOpenPromotionMenu] = useState(false);
+
+  function isPromotion() {
+    if (!selectedSquare) return false;
+    const piece = board[selectedSquare.i][selectedSquare.j];
+    if (!piece || piece[1] !== "0") return false;
+    const lastRow = turn === "w" ? 0 : 7;
+    if (lastRow !== index.i) return false;
+    return true;
+  }
 
   function getSideToRemoveCastlingRights() {
     if (!selectedSquare) return null;
@@ -83,6 +90,10 @@ export default function Square({
         castlingRights[turn],
       )
     ) {
+      if (isPromotion()) {
+        setIsOpenPromotionMenu(true);
+        return;
+      }
       moveSelectedSquare(index);
       handleCastlingRights();
       changeTurn();
@@ -99,6 +110,13 @@ export default function Square({
         {moveIndicator === "ring" && (
           <div className="absolute h-full w-full rounded-full border-[6px] opacity-20" />
         )}
+        {isOpenPromotionMenu && (
+          <PromotionMenu
+            pieceColor={turn}
+            isReversed={index.i === 7 ? true : false}
+            setIsOpen={setIsOpenPromotionMenu}
+          />
+        )}
       </div>
     );
   else
@@ -112,8 +130,8 @@ export default function Square({
         )}
         {isOpenPromotionMenu && (
           <PromotionMenu
-            pieceColor="w"
-            isReversed={false}
+            pieceColor={turn}
+            isReversed={index.i === 7 ? true : false}
             setIsOpen={setIsOpenPromotionMenu}
           />
         )}
