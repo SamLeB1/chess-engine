@@ -8,7 +8,6 @@ type GameState = {
   selectedSquare: Index | null;
   enPassantTarget: Index | null;
   castlingRights: CastlingRights;
-  changeTurn: () => void;
   selectSquare: (index: Index) => void;
   moveSelectedSquare: (index: Index) => void;
   removeCastlingRights: (
@@ -71,7 +70,6 @@ export const useGameStore = create<GameState>((set, get) => ({
       queenside: true,
     },
   },
-  changeTurn: () => set((state) => ({ turn: state.turn === "w" ? "b" : "w" })),
   selectSquare: (index: Index) => {
     const selectedSquare = get().selectedSquare;
     if (
@@ -110,6 +108,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     }
     set({
       board: updatedBoard,
+      turn: get().turn === "w" ? "b" : "w",
       selectedSquare: null,
       enPassantTarget: getEnPassantTarget(board, selectedSquare, index),
     });

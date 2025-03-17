@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { useShallow } from "zustand/shallow";
 import { useGameStore } from "../store/gameStore.ts";
+import useMakeMove from "../hooks/useMakeMove.tsx";
 import PromotionMenu from "./PromotionMenu.tsx";
 import { isValidMove } from "../utils/isValidMove.ts";
 import type { Index, Piece } from "../types.ts";
@@ -27,11 +29,18 @@ export default function Square({
     selectedSquare,
     enPassantTarget,
     castlingRights,
-    changeTurn,
     selectSquare,
-    moveSelectedSquare,
-    removeCastlingRights,
-  } = useGameStore((state) => state);
+  } = useGameStore(
+    useShallow((state) => ({
+      board: state.board,
+      turn: state.turn,
+      selectedSquare: state.selectedSquare,
+      enPassantTarget: state.enPassantTarget,
+      castlingRights: state.castlingRights,
+      selectSquare: state.selectSquare,
+    })),
+  );
+  const makeMove = useMakeMove();
   const [isOpenPromotionMenu, setIsOpenPromotionMenu] = useState(false);
 
   function isPromotion() {
@@ -41,41 +50,6 @@ export default function Square({
     const lastRow = turn === "w" ? 0 : 7;
     if (lastRow !== index.i) return false;
     return true;
-  }
-
-  function getSideToRemoveCastlingRights() {
-    if (!selectedSquare) return null;
-    const { kingside, queenside } = castlingRights[turn];
-    if (!kingside && !queenside) return null;
-
-    const row = turn === "w" ? 7 : 0;
-    if (selectedSquare.i === row && selectedSquare.j === 7 && kingside)
-      return "kingside";
-    else if (selectedSquare.i === row && selectedSquare.j === 0 && queenside)
-      return "queenside";
-    else if (selectedSquare.i === row && selectedSquare.j === 4) return "all";
-    else return null;
-  }
-
-  function getSideToRemoveCastlingRightsEnemy() {
-    const enemy = turn === "w" ? "b" : "w";
-    const { kingside, queenside } = castlingRights[enemy];
-    if (!kingside && !queenside) return null;
-
-    const row = turn === "w" ? 0 : 7;
-    if (index.i === row && index.j === 7 && kingside) return "kingside";
-    else if (index.i === row && index.j === 0 && queenside) return "queenside";
-    else return null;
-  }
-
-  function handleCastlingRights() {
-    const side = getSideToRemoveCastlingRights();
-    if (side) removeCastlingRights(turn, side);
-    const sideEnemy = getSideToRemoveCastlingRightsEnemy();
-    if (sideEnemy) {
-      const enemy = turn === "w" ? "b" : "w";
-      removeCastlingRights(enemy, sideEnemy);
-    }
   }
 
   function handleClick() {
@@ -90,13 +64,8 @@ export default function Square({
         castlingRights[turn],
       )
     ) {
-      if (isPromotion()) {
-        setIsOpenPromotionMenu(true);
-        return;
-      }
-      moveSelectedSquare(index);
-      handleCastlingRights();
-      changeTurn();
+      if (isPromotion()) setIsOpenPromotionMenu(true);
+      else makeMove(index);
     } else selectSquare(index);
   }
 
