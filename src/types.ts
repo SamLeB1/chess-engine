@@ -22,6 +22,8 @@ export type Piece =
   | "b4"
   | "b5";
 
+export type Promotion = "1" | "2" | "3" | "4";
+
 export type CastlingRights = {
   w: {
     kingside: boolean;

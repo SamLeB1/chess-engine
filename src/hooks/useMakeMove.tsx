@@ -1,6 +1,6 @@
 import { useShallow } from "zustand/shallow";
 import { useGameStore } from "../store/gameStore.ts";
-import type { Index } from "../types.ts";
+import type { Index, Promotion } from "../types.ts";
 
 export default function useMakeMove() {
   const {
@@ -54,8 +54,8 @@ export default function useMakeMove() {
     }
   }
 
-  function makeMove(index: Index) {
-    moveSelectedSquare(index);
+  function makeMove(index: Index, promotion: Promotion | null) {
+    moveSelectedSquare(index, promotion);
     handleCastlingRights(index);
   }
 

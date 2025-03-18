@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { getDistance, getDirection } from "../utils/index.ts";
-import type { Index, Piece, CastlingRights } from "../types.ts";
+import type { Index, Piece, Promotion, CastlingRights } from "../types.ts";
 
 type GameState = {
   board: (Piece | null)[][];
@@ -9,7 +9,7 @@ type GameState = {
   enPassantTarget: Index | null;
   castlingRights: CastlingRights;
   selectSquare: (index: Index) => void;
-  moveSelectedSquare: (index: Index) => void;
+  moveSelectedSquare: (index: Index, promotion: Promotion | null) => void;
   removeCastlingRights: (
     player: "w" | "b",
     side: "kingside" | "queenside" | "all",
@@ -84,7 +84,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     if (piece) set({ selectedSquare: index });
     else set({ selectedSquare: null });
   },
-  moveSelectedSquare: (index: Index) => {
+  moveSelectedSquare: (index: Index, promotion: Promotion | null) => {
     const selectedSquare = get().selectedSquare;
     if (!selectedSquare) return;
     const board = get().board;
@@ -92,6 +92,8 @@ export const useGameStore = create<GameState>((set, get) => ({
     updatedBoard[index.i][index.j] =
       updatedBoard[selectedSquare.i][selectedSquare.j];
     updatedBoard[selectedSquare.i][selectedSquare.j] = null;
+    if (promotion)
+      updatedBoard[index.i][index.j] = (get().turn + promotion) as Piece;
     if (isEnPassant(board, selectedSquare, index)) {
       const direction = getDirection(selectedSquare, index);
       updatedBoard[selectedSquare.i][selectedSquare.j + direction.x] = null;

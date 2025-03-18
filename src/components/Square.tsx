@@ -65,7 +65,7 @@ export default function Square({
       )
     ) {
       if (isPromotion()) setIsOpenPromotionMenu(true);
-      else makeMove(index);
+      else makeMove(index, null);
     } else selectSquare(index);
   }
 
@@ -81,6 +81,7 @@ export default function Square({
         )}
         {isOpenPromotionMenu && (
           <PromotionMenu
+            index={index}
             pieceColor={turn}
             isReversed={index.i === 7 ? true : false}
             setIsOpen={setIsOpenPromotionMenu}
@@ -99,6 +100,7 @@ export default function Square({
         )}
         {isOpenPromotionMenu && (
           <PromotionMenu
+            index={index}
             pieceColor={turn}
             isReversed={index.i === 7 ? true : false}
             setIsOpen={setIsOpenPromotionMenu}
