@@ -39,3 +39,10 @@ export type CastlingRightsPlayer = {
   kingside: boolean;
   queenside: boolean;
 };
+
+export type Position = {
+  board: (Piece | null)[][];
+  turn: "w" | "b";
+  castlingRights: CastlingRights;
+  enPassantTarget: Index | null;
+};
