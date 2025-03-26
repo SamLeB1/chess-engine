@@ -45,4 +45,6 @@ export type Position = {
   turn: "w" | "b";
   castlingRights: CastlingRights;
   enPassantTarget: Index | null;
+  halfmoveClock: number;
+  fullmoveNumber: number;
 };

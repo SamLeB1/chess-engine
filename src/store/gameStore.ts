@@ -8,6 +8,8 @@ type GameState = {
   selectedSquare: Index | null;
   enPassantTarget: Index | null;
   castlingRights: CastlingRights;
+  halfmoveClock: number;
+  fullmoveNumber: number;
   selectSquare: (index: Index) => void;
   moveSelectedSquare: (index: Index, promotion: Promotion | null) => void;
   removeCastlingRights: (
@@ -55,6 +57,16 @@ function isCastle(board: (Piece | null)[][], start: Index, end: Index) {
   else return false;
 }
 
+function isHalfmoveClockReset(
+  board: (Piece | null)[][],
+  start: Index,
+  end: Index,
+) {
+  const piece = board[start.i][start.j];
+  if ((piece && piece[1] === "0") || board[end.i][end.j]) return true;
+  else return false;
+}
+
 export const useGameStore = create<GameState>((set, get) => ({
   board: initBoard,
   turn: "w",
@@ -70,6 +82,8 @@ export const useGameStore = create<GameState>((set, get) => ({
       queenside: true,
     },
   },
+  halfmoveClock: 0,
+  fullmoveNumber: 1,
   selectSquare: (index: Index) => {
     const selectedSquare = get().selectedSquare;
     if (
@@ -113,6 +127,11 @@ export const useGameStore = create<GameState>((set, get) => ({
       turn: get().turn === "w" ? "b" : "w",
       selectedSquare: null,
       enPassantTarget: getEnPassantTarget(board, selectedSquare, index),
+      halfmoveClock: isHalfmoveClockReset(board, selectedSquare, index)
+        ? 0
+        : get().halfmoveClock + 1,
+      fullmoveNumber:
+        get().turn === "w" ? get().fullmoveNumber : get().fullmoveNumber + 1,
     });
   },
   removeCastlingRights: (
