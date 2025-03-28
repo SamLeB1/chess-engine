@@ -3,6 +3,12 @@ export type Index = {
   j: number;
 };
 
+export type Move = {
+  start: Index;
+  end: Index;
+  promotion: Promotion | null;
+};
+
 export type Direction = {
   x: -1 | 0 | 1;
   y: -1 | 0 | 1;
