@@ -5,7 +5,7 @@ import {
   isCastle,
   isHalfmoveClockReset,
 } from "./move.ts";
-import type { Move, Piece, Position } from "../types.ts";
+import type { Move, Piece, CastlingRights, Position } from "../types.ts";
 
 export default function getUpdatedPosition(
   position: Position,
@@ -33,10 +33,28 @@ export default function getUpdatedPosition(
       updatedBoard[start.i][0] = null;
     }
   }
+  let castlingRights: CastlingRights = JSON.parse(
+    JSON.stringify(position.castlingRights),
+  );
+  let row = position.turn === "w" ? 7 : 0;
+  if (start.i === row) {
+    if (start.j === 7) castlingRights[position.turn].kingside = false;
+    if (start.j === 0) castlingRights[position.turn].queenside = false;
+    if (start.j === 4) {
+      castlingRights[position.turn].kingside = false;
+      castlingRights[position.turn].queenside = false;
+    }
+  }
+  row = row === 7 ? 0 : 7;
+  const enemy = position.turn === "w" ? "b" : "w";
+  if (end.i === row) {
+    if (end.j === 7) castlingRights[enemy].kingside = false;
+    if (end.j === 0) castlingRights[enemy].queenside = false;
+  }
   return {
     board: updatedBoard,
     turn: position.turn === "w" ? "b" : "w",
-    castlingRights: position.castlingRights,
+    castlingRights,
     enPassantTarget: getEnPassantTarget(position.board, start, end),
     halfmoveClock: isHalfmoveClockReset(position.board, start, end)
       ? 0
