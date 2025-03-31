@@ -4,6 +4,7 @@ import { useGameStore } from "../store/gameStore.ts";
 import useMakeMove from "../hooks/useMakeMove.tsx";
 import PromotionMenu from "./PromotionMenu.tsx";
 import { isValidMove } from "../utils/isValidMove.ts";
+import { isPromotion } from "../utils/move.ts";
 import type { Index, Piece } from "../types.ts";
 
 type SquareProps = {
@@ -43,15 +44,6 @@ export default function Square({
   const makeMove = useMakeMove();
   const [isOpenPromotionMenu, setIsOpenPromotionMenu] = useState(false);
 
-  function isPromotion() {
-    if (!selectedSquare) return false;
-    const piece = board[selectedSquare.i][selectedSquare.j];
-    if (!piece || piece[1] !== "0") return false;
-    const lastRow = turn === "w" ? 0 : 7;
-    if (lastRow !== index.i) return false;
-    return true;
-  }
-
   function handleClick() {
     if (
       selectedSquare &&
@@ -64,7 +56,8 @@ export default function Square({
         castlingRights[turn],
       )
     ) {
-      if (isPromotion()) setIsOpenPromotionMenu(true);
+      if (isPromotion(board, turn, selectedSquare, index))
+        setIsOpenPromotionMenu(true);
       else makeMove(index, null);
     } else selectSquare(index);
   }

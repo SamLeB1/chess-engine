@@ -42,3 +42,16 @@ export function isHalfmoveClockReset(
   if ((piece && piece[1] === "0") || board[end.i][end.j]) return true;
   else return false;
 }
+
+export function isPromotion(
+  board: (Piece | null)[][],
+  turn: "w" | "b",
+  start: Index,
+  end: Index,
+) {
+  const piece = board[start.i][start.j];
+  if (!piece || piece[1] !== "0") return false;
+  const lastRow = turn === "w" ? 0 : 7;
+  if (lastRow !== end.i) return false;
+  return true;
+}
