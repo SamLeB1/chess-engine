@@ -1,4 +1,4 @@
-function isValidFenBoard(board: string) {
+export function isValidFenBoard(board: string) {
   const rows = board.split("/");
   if (rows.length !== 8) return false;
   for (let i = 0; i < rows.length; i++) {
@@ -36,7 +36,7 @@ function isValidFenBoard(board: string) {
   return true;
 }
 
-function isValidFenCastlingRights(castlingRights: string) {
+export function isValidFenCastlingRights(castlingRights: string) {
   if (castlingRights === "-") return true;
   if (castlingRights.length < 1 || castlingRights.length > 4) return false;
   let possibleChars = ["K", "Q", "k", "q"];
@@ -48,7 +48,7 @@ function isValidFenCastlingRights(castlingRights: string) {
   return true;
 }
 
-function isValidFenEnPassantTarget(enPassantTarget: string) {
+export function isValidFenEnPassantTarget(enPassantTarget: string) {
   if (enPassantTarget === "-") return true;
   if (
     enPassantTarget.length === 2 &&
@@ -66,7 +66,7 @@ function isValidFenEnPassantTarget(enPassantTarget: string) {
   else return false;
 }
 
-function isValidFenHalfmoveClock(halfmoveClock: string) {
+export function isValidFenHalfmoveClock(halfmoveClock: string) {
   if (halfmoveClock.length < 1 || halfmoveClock.length > 6) return false;
   if (halfmoveClock.length > 1 && halfmoveClock[0] === "0") return false;
   for (let i = 0; i < halfmoveClock.length; i++)
@@ -86,7 +86,7 @@ function isValidFenHalfmoveClock(halfmoveClock: string) {
   return true;
 }
 
-function isValidFenFullmoveNumber(fullmoveNumber: string) {
+export function isValidFenFullmoveNumber(fullmoveNumber: string) {
   if (
     fullmoveNumber.length < 1 ||
     fullmoveNumber.length > 6 ||
@@ -110,7 +110,7 @@ function isValidFenFullmoveNumber(fullmoveNumber: string) {
   return true;
 }
 
-function isValidFen(fen: string) {
+export function isValidFen(fen: string) {
   const fields = fen.split(" ");
   if (fields.length !== 6) return false;
   if (!isValidFenBoard(fields[0])) return false;
