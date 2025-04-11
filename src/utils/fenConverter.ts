@@ -1,5 +1,5 @@
 import { isValidFen } from "./isValidFen.ts";
-import type { Piece } from "../types.ts";
+import type { Piece, CastlingRights, Index, Position } from "../types.ts";
 
 function convertFenBoardToObj(fenBoard: string) {
   const rows = fenBoard.split("/");
@@ -53,11 +53,59 @@ function convertFenBoardToObj(fenBoard: string) {
   return board;
 }
 
-export function convertFenToObj(fen: string) {
+function convertFenCastlingRightsToObj(fenCastlingRights: string) {
+  let castlingRights: CastlingRights = {
+    w: {
+      kingside: false,
+      queenside: false,
+    },
+    b: {
+      kingside: false,
+      queenside: false,
+    },
+  };
+  if (fenCastlingRights === "-") return castlingRights;
+  for (let i = 0; i < fenCastlingRights.length; i++) {
+    if (fenCastlingRights[i] === "K") castlingRights.w.kingside = true;
+    if (fenCastlingRights[i] === "Q") castlingRights.w.queenside = true;
+    if (fenCastlingRights[i] === "k") castlingRights.b.kingside = true;
+    if (fenCastlingRights[i] === "q") castlingRights.b.queenside = true;
+  }
+  return castlingRights;
+}
+
+function convertFenEnPassantTargetToObj(
+  fenEnPassantTarget: string,
+): Index | null {
+  if (fenEnPassantTarget === "-") return null;
+  let i, j;
+
+  if (fenEnPassantTarget[1] === "3") i = 5;
+  else if (fenEnPassantTarget[1] === "6") i = 2;
+  else return null;
+
+  if (fenEnPassantTarget[0] === "a") j = 0;
+  else if (fenEnPassantTarget[0] === "b") j = 1;
+  else if (fenEnPassantTarget[0] === "c") j = 2;
+  else if (fenEnPassantTarget[0] === "d") j = 3;
+  else if (fenEnPassantTarget[0] === "e") j = 4;
+  else if (fenEnPassantTarget[0] === "f") j = 5;
+  else if (fenEnPassantTarget[0] === "g") j = 6;
+  else if (fenEnPassantTarget[0] === "h") j = 7;
+  else return null;
+
+  return { i, j };
+}
+
+export function convertFenToObj(fen: string): Position | null {
   if (!isValidFen(fen)) return null;
   const fields = fen.split(" ");
   return {
     board: convertFenBoardToObj(fields[0]),
-    turn: fields[1],
+    turn: fields[1] as "w" | "b",
+    castlingRights: convertFenCastlingRightsToObj(fields[2]),
+    enPassantTarget: convertFenEnPassantTargetToObj(fields[3]),
+    halfmoveClock: Number(fields[4]),
+    fullmoveNumber: Number(fields[5]),
   };
 }
