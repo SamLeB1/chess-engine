@@ -109,3 +109,59 @@ export function convertFenToObj(fen: string): Position | null {
     fullmoveNumber: Number(fields[5]),
   };
 }
+
+function convertObjBoardToFen(board: (Piece | null)[][]) {
+  let fenBoard = "";
+  for (let i = 0; i < 8; i++) {
+    let emptyCount = 0;
+    for (let j = 0; j < 8; j++) {
+      const piece = board[i][j];
+      if (piece) {
+        if (emptyCount) {
+          fenBoard += emptyCount.toString();
+          emptyCount = 0;
+        }
+        switch (piece) {
+          case "w0":
+            fenBoard += "P";
+            break;
+          case "b0":
+            fenBoard += "p";
+            break;
+          case "w1":
+            fenBoard += "R";
+            break;
+          case "b1":
+            fenBoard += "r";
+            break;
+          case "w2":
+            fenBoard += "N";
+            break;
+          case "b2":
+            fenBoard += "n";
+            break;
+          case "w3":
+            fenBoard += "B";
+            break;
+          case "b3":
+            fenBoard += "b";
+            break;
+          case "w4":
+            fenBoard += "Q";
+            break;
+          case "b4":
+            fenBoard += "q";
+            break;
+          case "w5":
+            fenBoard += "K";
+            break;
+          case "b5":
+            fenBoard += "k";
+        }
+      } else emptyCount++;
+    }
+    if (emptyCount) fenBoard += emptyCount.toString();
+    if (i < 7) fenBoard += "/";
+  }
+  return fenBoard;
+}
