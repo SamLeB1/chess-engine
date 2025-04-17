@@ -165,3 +165,50 @@ function convertObjBoardToFen(board: (Piece | null)[][]) {
   }
   return fenBoard;
 }
+
+function convertObjCastlingRightsToFen(castlingRights: CastlingRights) {
+  if (
+    !castlingRights.w.kingside &&
+    !castlingRights.w.queenside &&
+    !castlingRights.b.kingside &&
+    !castlingRights.b.queenside
+  )
+    return "-";
+  let fenCastlingRights = "";
+  if (castlingRights.w.kingside) fenCastlingRights += "K";
+  if (castlingRights.w.queenside) fenCastlingRights += "Q";
+  if (castlingRights.b.kingside) fenCastlingRights += "k";
+  if (castlingRights.b.queenside) fenCastlingRights += "q";
+  return fenCastlingRights;
+}
+
+function convertObjEnPassantTargetToFen(enPassantTarget: Index | null) {
+  if (!enPassantTarget) return "-";
+  let fenEnPassantTarget = "";
+
+  if (enPassantTarget.j === 0) fenEnPassantTarget += "a";
+  else if (enPassantTarget.j === 1) fenEnPassantTarget += "b";
+  else if (enPassantTarget.j === 2) fenEnPassantTarget += "c";
+  else if (enPassantTarget.j === 3) fenEnPassantTarget += "d";
+  else if (enPassantTarget.j === 4) fenEnPassantTarget += "e";
+  else if (enPassantTarget.j === 5) fenEnPassantTarget += "f";
+  else if (enPassantTarget.j === 6) fenEnPassantTarget += "g";
+  else fenEnPassantTarget += "h";
+
+  if (enPassantTarget.i === 2) fenEnPassantTarget += "6";
+  else fenEnPassantTarget += "3";
+
+  return fenEnPassantTarget;
+}
+
+function convertObjToFen(position: Position) {
+  const board = convertObjBoardToFen(position.board);
+  const turn = position.turn;
+  const castlingRights = convertObjCastlingRightsToFen(position.castlingRights);
+  const enPassantTarget = convertObjEnPassantTargetToFen(
+    position.enPassantTarget,
+  );
+  const halfmoveClock = position.halfmoveClock.toString();
+  const fullmoveNumber = position.fullmoveNumber.toString();
+  return `${board} ${turn} ${castlingRights} ${enPassantTarget} ${halfmoveClock} ${fullmoveNumber}`;
+}
