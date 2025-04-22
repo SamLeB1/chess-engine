@@ -170,7 +170,7 @@ function getKingIndex(board: (Piece | null)[][], player: "w" | "b") {
   return null;
 }
 
-function isInCheck(board: (Piece | null)[][], player: "w" | "b") {
+export function isInCheck(board: (Piece | null)[][], player: "w" | "b") {
   const kingIndex = getKingIndex(board, player);
   if (!kingIndex) return false;
   const enemy = player === "w" ? "b" : "w";
@@ -351,28 +351,4 @@ export function isValidMove(
     default:
       return false;
   }
-}
-
-export function getValidMoves(
-  board: (Piece | null)[][],
-  turn: "w" | "b",
-  start: Index,
-  enPassantTarget: Index | null,
-  castlingRights: CastlingRightsPlayer,
-) {
-  let validMoves: Index[] = [];
-  for (let i = 0; i < 8; i++)
-    for (let j = 0; j < 8; j++)
-      if (
-        isValidMove(
-          board,
-          turn,
-          start,
-          { i, j },
-          enPassantTarget,
-          castlingRights,
-        )
-      )
-        validMoves.push({ i, j });
-  return validMoves;
 }

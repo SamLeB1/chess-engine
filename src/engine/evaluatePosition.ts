@@ -1,11 +1,18 @@
+import { isCheckmate, isStalemate } from "../utils/gameOver.ts";
 import type { Position } from "../types.ts";
 
 export default function evaluatePosition(position: Position) {
+  const { board, turn, castlingRights, enPassantTarget } = position;
+
+  if (isCheckmate(board, turn, castlingRights, enPassantTarget))
+    return turn === "w" ? -Infinity : Infinity;
+  if (isStalemate(board, turn, castlingRights, enPassantTarget)) return 0;
+
   let wValue = 0;
   let bValue = 0;
   for (let i = 0; i < 8; i++)
     for (let j = 0; j < 8; j++) {
-      const piece = position.board[i][j];
+      const piece = board[i][j];
       if (piece)
         switch (piece[1]) {
           case "0":
