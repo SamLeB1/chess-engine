@@ -334,20 +334,37 @@ export function isValidMove(
   const piece = board[start.i][start.j];
   if (!piece) return false;
   if (piece[0] !== turn) return false;
-  if (isInCheck(getUpdatedBoard(board, start, end), turn)) return false;
   switch (piece[1]) {
     case "0":
-      return isValidMovePawn(board, turn, start, end, enPassantTarget);
+      return (
+        isValidMovePawn(board, turn, start, end, enPassantTarget) &&
+        !isInCheck(getUpdatedBoard(board, start, end), turn)
+      );
     case "1":
-      return isValidMoveRook(board, turn, start, end);
+      return (
+        isValidMoveRook(board, turn, start, end) &&
+        !isInCheck(getUpdatedBoard(board, start, end), turn)
+      );
     case "2":
-      return isValidMoveKnight(board, turn, start, end);
+      return (
+        isValidMoveKnight(board, turn, start, end) &&
+        !isInCheck(getUpdatedBoard(board, start, end), turn)
+      );
     case "3":
-      return isValidMoveBishop(board, turn, start, end);
+      return (
+        isValidMoveBishop(board, turn, start, end) &&
+        !isInCheck(getUpdatedBoard(board, start, end), turn)
+      );
     case "4":
-      return isValidMoveQueen(board, turn, start, end);
+      return (
+        isValidMoveQueen(board, turn, start, end) &&
+        !isInCheck(getUpdatedBoard(board, start, end), turn)
+      );
     case "5":
-      return isValidMoveKing(board, turn, start, end, castlingRights);
+      return (
+        isValidMoveKing(board, turn, start, end, castlingRights) &&
+        !isInCheck(getUpdatedBoard(board, start, end), turn)
+      );
     default:
       return false;
   }

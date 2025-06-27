@@ -35,8 +35,7 @@ export function isStalemate(
 export function isGameOver(position: Position) {
   const { board, turn, castlingRights, enPassantTarget } = position;
   if (
-    isCheckmate(board, turn, castlingRights, enPassantTarget) ||
-    isStalemate(board, turn, castlingRights, enPassantTarget)
+    getValidMovesCount(board, turn, castlingRights[turn], enPassantTarget) === 0
   )
     return true;
   else return false;

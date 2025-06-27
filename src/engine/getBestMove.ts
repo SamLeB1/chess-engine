@@ -30,7 +30,7 @@ export default function getBestMove(position: Position) {
   const possiblePositions = getPossiblePositionsWithMoves(position);
   if (possiblePositions.length === 0) return null;
   let bestMove = possiblePositions[0].move;
-  const depth = 2;
+  const depth = 3;
   if (position.turn === "w") {
     let maxEval = -Infinity;
     for (let i = 0; i < possiblePositions.length; i++) {

@@ -1,12 +1,20 @@
-import { isCheckmate, isStalemate } from "../utils/gameOver.ts";
+import { getValidMovesCount } from "../utils/getValidMoves.ts";
+import { isInCheck } from "../utils/isValidMove.ts";
 import type { Position } from "../types.ts";
 
 export default function evaluatePosition(position: Position) {
   const { board, turn, castlingRights, enPassantTarget } = position;
 
-  if (isCheckmate(board, turn, castlingRights, enPassantTarget))
-    return turn === "w" ? -Infinity : Infinity;
-  if (isStalemate(board, turn, castlingRights, enPassantTarget)) return 0;
+  const validMovesCount = getValidMovesCount(
+    board,
+    turn,
+    castlingRights[turn],
+    enPassantTarget,
+  );
+  if (validMovesCount === 0) {
+    if (isInCheck(board, turn)) return turn === "w" ? -Infinity : Infinity;
+    else return 0;
+  }
 
   let wValue = 0;
   let bValue = 0;
