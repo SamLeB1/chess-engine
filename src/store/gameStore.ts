@@ -11,6 +11,7 @@ import type { Index, Piece, Promotion, CastlingRights } from "../types.ts";
 type GameState = {
   board: (Piece | null)[][];
   turn: "w" | "b";
+  computerTurn: "w" | "b";
   selectedSquare: Index | null;
   enPassantTarget: Index | null;
   castlingRights: CastlingRights;
@@ -38,6 +39,7 @@ const initBoard: (Piece | null)[][] = [
 export const useGameStore = create<GameState>((set, get) => ({
   board: initBoard,
   turn: "w",
+  computerTurn: "b",
   selectedSquare: null,
   enPassantTarget: null,
   castlingRights: {

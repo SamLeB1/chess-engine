@@ -27,6 +27,7 @@ export default function Square({
   const {
     board,
     turn,
+    computerTurn,
     selectedSquare,
     enPassantTarget,
     castlingRights,
@@ -35,6 +36,7 @@ export default function Square({
     useShallow((state) => ({
       board: state.board,
       turn: state.turn,
+      computerTurn: state.computerTurn,
       selectedSquare: state.selectedSquare,
       enPassantTarget: state.enPassantTarget,
       castlingRights: state.castlingRights,
@@ -46,6 +48,7 @@ export default function Square({
 
   function handleClick() {
     if (
+      turn !== computerTurn &&
       selectedSquare &&
       isValidMove(
         board,

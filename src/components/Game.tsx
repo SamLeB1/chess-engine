@@ -1,7 +1,11 @@
+import { useEffect } from "react";
 import { useShallow } from "zustand/shallow";
 import { useGameStore } from "../store/gameStore.ts";
+import useGetPosition from "../hooks/useGetPosition.tsx";
+import useMakeMove from "../hooks/useMakeMove.tsx";
 import Square from "./Square.tsx";
 import { getValidMovesFromIndex } from "../utils/getValidMoves.ts";
+import getBestMove from "../engine/getBestMove.ts";
 import img_bishop_b from "../assets/images/Chess_bdt45.svg";
 import img_bishop_w from "../assets/images/Chess_blt45.svg";
 import img_king_b from "../assets/images/Chess_kdt45.svg";
@@ -17,16 +21,27 @@ import img_rook_w from "../assets/images/Chess_rlt45.svg";
 import type { Index, Piece } from "../types.ts";
 
 export default function Game() {
-  const { board, turn, selectedSquare, enPassantTarget, castlingRights } =
-    useGameStore(
-      useShallow((state) => ({
-        board: state.board,
-        turn: state.turn,
-        selectedSquare: state.selectedSquare,
-        enPassantTarget: state.enPassantTarget,
-        castlingRights: state.castlingRights,
-      })),
-    );
+  const {
+    board,
+    turn,
+    computerTurn,
+    selectedSquare,
+    enPassantTarget,
+    castlingRights,
+    selectSquare,
+  } = useGameStore(
+    useShallow((state) => ({
+      board: state.board,
+      turn: state.turn,
+      computerTurn: state.computerTurn,
+      selectedSquare: state.selectedSquare,
+      enPassantTarget: state.enPassantTarget,
+      castlingRights: state.castlingRights,
+      selectSquare: state.selectSquare,
+    })),
+  );
+  const getPosition = useGetPosition();
+  const makeMove = useMakeMove();
   const validMoves = selectedSquare
     ? getValidMovesFromIndex(
         board,
@@ -48,6 +63,7 @@ export default function Game() {
   }
 
   function getMoveIndicator(index: Index) {
+    if (turn === computerTurn) return null;
     for (let i = 0; i < validMoves.length; i++)
       if (validMoves[i].i === index.i && validMoves[i].j === index.j)
         if (board[index.i][index.j]) return "ring";
@@ -95,6 +111,16 @@ export default function Game() {
         return null;
     }
   }
+
+  useEffect(() => {
+    if (turn === computerTurn) {
+      const computerMove = getBestMove(getPosition());
+      if (computerMove) {
+        selectSquare(computerMove.start);
+        makeMove(computerMove.end, computerMove.promotion);
+      }
+    }
+  }, [turn]);
 
   return (
     <div>
