@@ -18,6 +18,7 @@ type GameState = {
   halfmoveClock: number;
   fullmoveNumber: number;
   selectSquare: (index: Index) => void;
+  deselectSquare: () => void;
   moveSelectedSquare: (index: Index, promotion: Promotion | null) => void;
   removeCastlingRights: (
     player: "w" | "b",
@@ -68,6 +69,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     if (piece) set({ selectedSquare: index });
     else set({ selectedSquare: null });
   },
+  deselectSquare: () => set({ selectedSquare: null }),
   moveSelectedSquare: (index: Index, promotion: Promotion | null) => {
     const selectedSquare = get().selectedSquare;
     if (!selectedSquare) return;

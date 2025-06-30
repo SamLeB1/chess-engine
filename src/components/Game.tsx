@@ -5,7 +5,6 @@ import useGetPosition from "../hooks/useGetPosition.tsx";
 import useMakeMove from "../hooks/useMakeMove.tsx";
 import Square from "./Square.tsx";
 import { getValidMovesFromIndex } from "../utils/getValidMoves.ts";
-import getBestMove from "../engine/getBestMove.ts";
 import img_bishop_b from "../assets/images/Chess_bdt45.svg";
 import img_bishop_w from "../assets/images/Chess_blt45.svg";
 import img_king_b from "../assets/images/Chess_kdt45.svg";
@@ -18,7 +17,7 @@ import img_queen_b from "../assets/images/Chess_qdt45.svg";
 import img_queen_w from "../assets/images/Chess_qlt45.svg";
 import img_rook_b from "../assets/images/Chess_rdt45.svg";
 import img_rook_w from "../assets/images/Chess_rlt45.svg";
-import type { Index, Piece } from "../types.ts";
+import type { Index, Piece, Move } from "../types.ts";
 
 export default function Game() {
   const {
@@ -29,6 +28,7 @@ export default function Game() {
     enPassantTarget,
     castlingRights,
     selectSquare,
+    deselectSquare,
   } = useGameStore(
     useShallow((state) => ({
       board: state.board,
@@ -38,6 +38,7 @@ export default function Game() {
       enPassantTarget: state.enPassantTarget,
       castlingRights: state.castlingRights,
       selectSquare: state.selectSquare,
+      deselectSquare: state.deselectSquare,
     })),
   );
   const getPosition = useGetPosition();
@@ -113,13 +114,22 @@ export default function Game() {
   }
 
   useEffect(() => {
-    if (turn === computerTurn) {
-      const computerMove = getBestMove(getPosition());
-      if (computerMove) {
-        selectSquare(computerMove.start);
-        makeMove(computerMove.end, computerMove.promotion);
-      }
-    }
+    const worker = new Worker(
+      new URL("../getBestMoveWorker.ts", import.meta.url),
+      { type: "module" },
+    );
+
+    if (turn === computerTurn) worker.postMessage(getPosition());
+
+    worker.onmessage = (e: MessageEvent<Move | null>) => {
+      const move = e.data;
+      if (!move) return;
+      deselectSquare();
+      selectSquare(move.start);
+      makeMove(move.end, move.promotion);
+    };
+
+    return () => worker.terminate();
   }, [turn]);
 
   return (
