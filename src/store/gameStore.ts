@@ -6,6 +6,7 @@ import {
   isCastle,
   isHalfmoveClockReset,
 } from "../utils/move.ts";
+import { convertFenToObj } from "../utils/fenConverter.ts";
 import type { Index, Piece, Promotion, CastlingRights } from "../types.ts";
 
 type GameState = {
@@ -24,6 +25,7 @@ type GameState = {
     player: "w" | "b",
     side: "kingside" | "queenside" | "all",
   ) => void;
+  loadFromFEN: (FEN: string) => void;
 };
 
 const initBoard: (Piece | null)[][] = [
@@ -118,5 +120,19 @@ export const useGameStore = create<GameState>((set, get) => ({
       castlingRights[player].queenside = false;
     } else castlingRights[player][side] = false;
     set({ castlingRights });
+  },
+  loadFromFEN: (FEN: string) => {
+    const position = convertFenToObj(FEN);
+    if (!position) throw new Error("Failed to load from FEN.");
+    set({
+      board: position.board,
+      turn: position.turn,
+      computerTurn: "b",
+      selectedSquare: null,
+      enPassantTarget: position.enPassantTarget,
+      castlingRights: position.castlingRights,
+      halfmoveClock: position.halfmoveClock,
+      fullmoveNumber: position.fullmoveNumber,
+    });
   },
 }));
