@@ -7,7 +7,8 @@ import { isGameOver } from "../utils/gameOver.ts";
 import type { Position } from "../types.ts";
 
 function minimax(position: Position, depth: number) {
-  if (depth === 0 || isGameOver(position)) return evaluatePosition(position);
+  if (depth === 0 || isGameOver(position))
+    return evaluatePosition(position, depth);
   const possiblePositions = getPossiblePositions(position);
   if (position.turn === "w") {
     let maxEval = -Infinity;

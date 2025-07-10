@@ -149,7 +149,7 @@ function mirrorPST(PST: number[][]) {
   return mirroredPST;
 }
 
-export default function evaluatePosition(position: Position) {
+export default function evaluatePosition(position: Position, depth: number) {
   const { board, turn, castlingRights, enPassantTarget } = position;
 
   const validMovesCount = getValidMovesCount(
@@ -159,7 +159,8 @@ export default function evaluatePosition(position: Position) {
     enPassantTarget,
   );
   if (validMovesCount === 0) {
-    if (isInCheck(board, turn)) return turn === "w" ? -Infinity : Infinity;
+    if (isInCheck(board, turn))
+      return turn === "w" ? -20000 - depth : 20000 + depth;
     else return 0;
   }
 
