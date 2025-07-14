@@ -1,5 +1,6 @@
 import { getValidMovesCount } from "../utils/getValidMoves.ts";
 import { isInCheck } from "../utils/isValidMove.ts";
+import { isEndgame } from "../utils/board.ts";
 import type { Position } from "../types.ts";
 
 type PieceValues = {
@@ -124,7 +125,7 @@ const PST_KING_END = [
   [-50, -30, -30, -30, -30, -30, -30, -50],
 ];
 
-const PSTs: PSTs = {
+let PSTs: PSTs = {
   w0: PST_PAWN,
   w1: PST_ROOK,
   w2: PST_KNIGHT,
@@ -164,6 +165,13 @@ export default function evaluatePosition(position: Position, depth: number) {
     else return 0;
   }
 
+  if (isEndgame(board)) {
+    PSTs.w5 = PST_KING_END;
+    PSTs.b5 = mirrorPST(PST_KING_END);
+  } else {
+    PSTs.w5 = PST_KING_MID;
+    PSTs.b5 = mirrorPST(PST_KING_MID);
+  }
   let pieceScore = 0;
   for (let i = 0; i < 8; i++) {
     for (let j = 0; j < 8; j++) {
