@@ -16,7 +16,7 @@ export default function LoadFromFEN() {
   }
 
   return (
-    <div className="mb-2">
+    <div className="mb-1">
       <input
         className="border px-2"
         type="text"

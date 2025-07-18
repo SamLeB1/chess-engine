@@ -201,7 +201,7 @@ function convertObjEnPassantTargetToFen(enPassantTarget: Index | null) {
   return fenEnPassantTarget;
 }
 
-function convertObjToFen(position: Position) {
+export function convertObjToFen(position: Position) {
   const board = convertObjBoardToFen(position.board);
   const turn = position.turn;
   const castlingRights = convertObjCastlingRightsToFen(position.castlingRights);
